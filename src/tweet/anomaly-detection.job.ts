@@ -1,15 +1,17 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {Cron} from '@nestjs/schedule';
 import {TweetRepository} from "./tweet.repository";
+import {AlertRepository} from "./alert.repository";
+import {AlertType} from "./alert";
 
 const WINDOW_SIZE_IN_MINUTES = 5; // 5 minutes
 const WINDOW_COMPARISON_SIZE = 10; // 50 minutes
 
 @Injectable()
-export class WindowAnalyzeJob {
-    private readonly logger = new Logger(WindowAnalyzeJob.name);
+export class AnomalyDetectionJob {
+    private readonly logger = new Logger(AnomalyDetectionJob.name);
 
-    constructor(private readonly tweetRepository: TweetRepository) {
+    constructor(private readonly tweetRepository: TweetRepository, private readonly alertRepository: AlertRepository) {
     }
 
     @Cron('*/5 * * * * *')
@@ -35,7 +37,20 @@ export class WindowAnalyzeJob {
         const isCurrentWindowAboveThreshold = currentWindow.count > prevFullWindowsAverage * 2;
 
         if (isCurrentWindowAboveThreshold) {
-            this.logger.log(`Current window is above threshold, alerting...`);
+            this.logger.log(`Current window is above threshold. Alerting...`);
+            const alert = await this.alertRepository.findAlertByTypeInWindow(AlertType.DOUBLED_AVG_TWEET_COUNT, windowStart, windowEnd);
+
+
+            await this.alertRepository.create({
+                type: AlertType.DOUBLED_AVG_TWEET_COUNT,
+                created_at: now,
+                params: {
+                    windowStart,
+                    windowEnd,
+                    currentWindowCount: currentWindow.count,
+                    prevFullWindowsAverage,
+                },
+            });
         }
     }
 }
