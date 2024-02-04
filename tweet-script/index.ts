@@ -1,6 +1,20 @@
 import {random} from "lodash";
 import moment from "moment";
 
+import Redis from "ioredis";
+
+const redis = new Redis(); // Connects to 127.0.0.1:6379 by default
+
+type Tweet = {
+    id: number;
+    text: string;
+    created_at: string;
+    user: {
+        id: number;
+        name: string;
+    }
+};
+
 // Constants
 const HASHTAG = '#YourHashtag';
 const TWEET_OPTIONS = [
@@ -12,9 +26,13 @@ const TWEET_OPTIONS = [
     "I'm really passionate about",
 ];
 
-function generateRandomTweet() {
+function publishTweet(tweet: Tweet) {
+    redis.publish('tweet_channel', JSON.stringify(tweet));
+}
+
+function generateRandomTweet(): Tweet {
     const text = `${TWEET_OPTIONS[random(0, TWEET_OPTIONS.length - 1)]} ${HASHTAG}`;
-    const tweet = {
+    return {
         id: random(1000000, 999999999),
         text: text,
         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -23,7 +41,6 @@ function generateRandomTweet() {
             name: `User${random(1, 1000)}`
         }
     };
-    return JSON.stringify(tweet);
 }
 
 function tweetStreamSimulation(tweetsPerMinute: number) {
@@ -31,7 +48,8 @@ function tweetStreamSimulation(tweetsPerMinute: number) {
     let count = 0;
 
     const generateAndLogTweet = () => {
-        generateRandomTweet(); // Generate tweet
+        const tweet = generateRandomTweet(); // Generate tweet
+        publishTweet(tweet); // Publish tweet to Redis
         count++;
         console.log(`Tweet Count: ${count}`);
     };
@@ -39,4 +57,4 @@ function tweetStreamSimulation(tweetsPerMinute: number) {
     setInterval(generateAndLogTweet, interval);
 }
 
-tweetStreamSimulation(1000);
+tweetStreamSimulation(10000);
