@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {Controller, Injectable, Logger} from '@nestjs/common';
+import {Ctx, MessagePattern, Payload, RedisContext} from "@nestjs/microservices";
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private readonly logger = new Logger(AppController.name);
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @MessagePattern('tweet_channel')
+  async handleTweetPublished(@Payload() data: any, @Ctx() context: RedisContext) {
+    this.logger.log(`Received message: ${JSON.stringify(data)}`);
+    this.logger.log(`Channel: ${context.getChannel()}`);
+    // Handle the tweet data
   }
 }
