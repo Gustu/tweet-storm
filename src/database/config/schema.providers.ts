@@ -13,5 +13,5 @@ export const schemaProviders = [
         provide: ALERT_MODEL,
         useFactory: (connection: Connection) => connection.model('Alert', AlertSchema),
         inject: [DATABASE_CONNECTION],
-    }
+    },
 ];
