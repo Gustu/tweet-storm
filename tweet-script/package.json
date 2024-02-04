@@ -9,6 +9,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.202",
     "@types/moment": "^2.13.0",
+    "@types/node": "^20.11.16",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },

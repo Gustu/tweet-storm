@@ -57,4 +57,8 @@ function tweetStreamSimulation(tweetsPerMinute: number) {
     setInterval(generateAndLogTweet, interval);
 }
 
-tweetStreamSimulation(10000);
+// take number of tweets from command line
+const args = process.argv.slice(2);
+const tweetsPerMinute = parseInt(args[0]);
+
+tweetStreamSimulation(tweetsPerMinute);
