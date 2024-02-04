@@ -11,7 +11,6 @@ export class TweetController {
 
   }
 
-
   @MessagePattern('tweet_channel')
   async handleTweetPublished(@Payload() data: Tweet, @Ctx() context: RedisContext) {
     this.logger.log(`Received message: ${JSON.stringify(data)}`);
