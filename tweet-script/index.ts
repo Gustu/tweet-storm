@@ -51,7 +51,10 @@ function tweetStreamSimulation(tweetsPerMinute: number) {
         const tweet = generateRandomTweet(); // Generate tweet
         publishTweet(tweet); // Publish tweet to Redis
         count++;
-        console.log(`Tweet Count: ${count}`);
+
+        if (count % 50 === 0) {
+            console.log(`Published ${count} tweets`);
+        }
     };
 
     setInterval(generateAndLogTweet, interval);
