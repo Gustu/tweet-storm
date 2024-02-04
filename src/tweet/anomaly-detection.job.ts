@@ -38,9 +38,6 @@ export class AnomalyDetectionJob {
 
         if (isCurrentWindowAboveThreshold) {
             this.logger.log(`Current window is above threshold. Alerting...`);
-            const alert = await this.alertRepository.findAlertByTypeInWindow(AlertType.DOUBLED_AVG_TWEET_COUNT, windowStart, windowEnd);
-
-
             await this.alertRepository.create({
                 type: AlertType.DOUBLED_AVG_TWEET_COUNT,
                 created_at: now,
