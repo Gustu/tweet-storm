@@ -1,2 +1,3 @@
 export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 export const TWEET_MODEL = 'TWEET_MODEL';
+export const ALERT_MODEL = 'ALERT_MODEL';
